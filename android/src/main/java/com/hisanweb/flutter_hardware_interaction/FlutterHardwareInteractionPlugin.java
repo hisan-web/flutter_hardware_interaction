@@ -33,6 +33,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import static com.hisanweb.flutter_hardware_interaction.msprintsdk.PrintCmd.PrintDiskImagefile;
 import static com.hisanweb.flutter_hardware_interaction.msprintsdk.PrintCmd.PrintFeedDot;
 import static com.hisanweb.flutter_hardware_interaction.msprintsdk.UtilsTools.convertToBlackWhite;
+import static com.hisanweb.flutter_hardware_interaction.msprintsdk.UtilsTools.data;
 import static com.hisanweb.flutter_hardware_interaction.msprintsdk.UtilsTools.hexStringToBytes;
 import static com.hisanweb.flutter_hardware_interaction.msprintsdk.UtilsTools.hexToByteArr;
 import static com.hisanweb.flutter_hardware_interaction.msprintsdk.UtilsTools.unicodeToUtf8;
@@ -152,165 +153,168 @@ public class FlutterHardwareInteractionPlugin implements FlutterPlugin, MethodCa
     // 设置汉子模式
     mUsbDriver.write(PrintCmd.SetReadZKmode(0));
     PrintFeedDot(30);
-    dataModelList.forEach(new Consumer<MsPrintDataModel>() {
-      @Override
-      public void accept(MsPrintDataModel dataModel) {
-        String type = dataModel.getType();
-        String data = dataModel.getData();
-        int lineFeed = dataModel.getLineFeed();
-        if (type.equals("SetHT")) {
-          List<Integer> sheets = dataModel.getSheet();
-          int len = sheets.size();
-          byte[] bByte = new byte[len];
-          for (int i = 0; i < sheets.size(); i++) {
-            bByte[0] = sheets.get(i).byteValue();
-          }
-          mUsbDriver.write(PrintCmd.SetHTseat(bByte, len));
-        } else if (type.equals("NextHT")) {
-          mUsbDriver.write(PrintCmd.PrintNextHT());
-        } else if (type.equals("String")) {
-          mUsbDriver.write(PrintCmd.PrintString(data, lineFeed));
-        } else if (type.equals("ImageBase64")) {
-          Bitmap bitmap = null;
-          int width, heigh;
-          byte[] bytes = Base64.decode(data.split(",")[1], Base64.DEFAULT);
-          bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-          bitmap = convertToBlackWhite(bitmap);
-          width = bitmap.getWidth();
-          heigh = bitmap.getHeight();
-          int iDataLen = width * heigh;
-          int[] pixels = new int[iDataLen];
-          bitmap.getPixels(pixels, 0, width, 0, 0, width, heigh);
-          int[] data1 = pixels;
-          mUsbDriver.write(PrintDiskImagefile(data1, width, heigh));
-        } else if (type.equals("QrCode")) {
-          mUsbDriver.write(PrintCmd.PrintQrcode(unicodeToUtf8(data), 0, 5, 0));
-        } else if (type.equals("FeedDot")) {
-          mUsbDriver.write(PrintCmd.PrintFeedDot(Integer.valueOf(data)));
-        } else if (type.equals("FeedLine")) {
-          mUsbDriver.write(PrintCmd.PrintFeedline(Integer.valueOf(data)));
-        } else {
-          return;
-        }
-      }
-    });
-//    m_sbData = new StringBuilder("店号：8888          机号：100001");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
-//    m_sbData = new StringBuilder("电话:0755-12345678");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
-//    //PrintFeedDot(20);
-//    m_sbData = new StringBuilder("收银：01-店长");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
-//    m_sbData = new StringBuilder("时间：" + data());
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
-//    m_sbData = new StringBuilder("-------------------------------");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
-//    byte[] bByte = new byte[3];
-//    bByte[0] = 12;
-//    bByte[1] = 18;
-//    bByte[2] = 26;
-//    mUsbDriver.write(PrintCmd.SetHTseat(bByte, 3));
-//
-//    m_sbData = new StringBuilder("代码");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
-//    mUsbDriver.write(PrintCmd.PrintNextHT());
-//    m_sbData = new StringBuilder("单价");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
-//    mUsbDriver.write(PrintCmd.PrintNextHT());
-//    m_sbData = new StringBuilder("数量");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
-//    mUsbDriver.write(PrintCmd.PrintNextHT());
-//    m_sbData = new StringBuilder("金额");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
-//
-//    m_sbData = new StringBuilder("48572819");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
-//    mUsbDriver.write(PrintCmd.PrintNextHT());
-//    m_sbData = new StringBuilder("2.00");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
-//    mUsbDriver.write(PrintCmd.PrintNextHT());
-//    m_sbData = new StringBuilder("3.00");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
-//    mUsbDriver.write(PrintCmd.PrintNextHT());
-//    m_sbData = new StringBuilder("6.00");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
-//    m_sbData = new StringBuilder("怡宝矿泉水");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
-//    m_sbData = new StringBuilder("48572820");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
-//    mUsbDriver.write(PrintCmd.PrintNextHT());
-//    m_sbData = new StringBuilder("2.50");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
-//    mUsbDriver.write(PrintCmd.PrintNextHT());
-//    m_sbData = new StringBuilder("2.00");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
-//    mUsbDriver.write(PrintCmd.PrintNextHT());
-//    m_sbData = new StringBuilder("5.00");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
-//    m_sbData = new StringBuilder("百事可乐(罐装)");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
-//    m_sbData = new StringBuilder("-------------------------------");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
-//    m_sbData = new StringBuilder("合计：");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
-//    mUsbDriver.write(PrintCmd.PrintNextHT());
-//    mUsbDriver.write(PrintCmd.PrintNextHT());
-//    m_sbData = new StringBuilder("5.00");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
-//    mUsbDriver.write(PrintCmd.PrintNextHT());
-//    m_sbData = new StringBuilder("11.00");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
-//
-//    m_sbData = new StringBuilder("优惠：");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
-//    mUsbDriver.write(PrintCmd.PrintNextHT());
-//    mUsbDriver.write(PrintCmd.PrintNextHT());
-//    mUsbDriver.write(PrintCmd.PrintNextHT());
-//    m_sbData = new StringBuilder(" 0.00");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
-//
-//    m_sbData = new StringBuilder("应付：");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
-//    mUsbDriver.write(PrintCmd.PrintNextHT());
-//    mUsbDriver.write(PrintCmd.PrintNextHT());
-//    mUsbDriver.write(PrintCmd.PrintNextHT());
-//    m_sbData = new StringBuilder("11.00");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
-//
-//    m_sbData = new StringBuilder("微信支付：");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
-//    mUsbDriver.write(PrintCmd.PrintNextHT());
-//    mUsbDriver.write(PrintCmd.PrintNextHT());
-//    mUsbDriver.write(PrintCmd.PrintNextHT());
-//    m_sbData = new StringBuilder("11.00");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
-//
-//    m_sbData = new StringBuilder("找零：");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
-//    mUsbDriver.write(PrintCmd.PrintNextHT());
-//    mUsbDriver.write(PrintCmd.PrintNextHT());
-//    mUsbDriver.write(PrintCmd.PrintNextHT());
-//    m_sbData = new StringBuilder(" 0.00");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
-//
-//    m_sbData = new StringBuilder("-------------------------------");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
-//    m_sbData = new StringBuilder("会员：");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
-//    m_sbData = new StringBuilder("券号：");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
-//    m_sbData = new StringBuilder("-------------------------------");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
-//    PrintFeedDot(20);
-//    m_sbData = new StringBuilder("手机易捷通：ejeton.com.cn ");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
-//    m_sbData = new StringBuilder("客户热线：400-6088-160");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
-//    m_sbData = new StringBuilder("微信号：ejeton ");
-//    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
-//    m_sbData = new StringBuilder("http://weixin.qq.com/r/R3VZQQDEi130rUQi9yBV");
-//    mUsbDriver.write(PrintCmd.PrintQrcode(unicodeToUtf8(m_sbData.toString()), 10, 5, 0));
-//    mUsbDriver.write(PrintCmd.PrintFeedline(5));
+    StringBuilder m_sbData;
+//    dataModelList.forEach(new Consumer<MsPrintDataModel>() {
+//      @Override
+//      public void accept(MsPrintDataModel dataModel) {
+//        String type = dataModel.getType();
+//        String data = dataModel.getData();
+//        int lineFeed = dataModel.getLineFeed();
+//        if (type.equals("SetHT")) {
+//          List<Integer> sheets = dataModel.getSheet();
+//          int len = sheets.size();
+//          byte[] bByte = new byte[len];
+//          for (int i = 0; i < sheets.size(); i++) {
+//            bByte[0] = sheets.get(i).byteValue();
+//          }
+//          mUsbDriver.write(PrintCmd.SetHTseat(bByte, len));
+//        } else if (type.equals("NextHT")) {
+//          mUsbDriver.write(PrintCmd.PrintNextHT());
+//        } else if (type.equals("String")) {
+//          mUsbDriver.write(PrintCmd.PrintString(data, lineFeed));
+//        } else if (type.equals("ImageBase64")) {
+//          Bitmap bitmap = null;
+//          int width, heigh;
+//          byte[] bytes = Base64.decode(data.split(",")[1], Base64.DEFAULT);
+//          bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+//          bitmap = convertToBlackWhite(bitmap);
+//          width = bitmap.getWidth();
+//          heigh = bitmap.getHeight();
+//          int iDataLen = width * heigh;
+//          int[] pixels = new int[iDataLen];
+//          bitmap.getPixels(pixels, 0, width, 0, 0, width, heigh);
+//          int[] data1 = pixels;
+//          mUsbDriver.write(PrintDiskImagefile(data1, width, heigh));
+//        } else if (type.equals("QrCode")) {
+//          mUsbDriver.write(PrintCmd.PrintQrcode(unicodeToUtf8(data), 0, 5, 0));
+//        } else if (type.equals("FeedDot")) {
+//          mUsbDriver.write(PrintCmd.PrintFeedDot(Integer.valueOf(data)));
+//        } else if (type.equals("FeedLine")) {
+//          mUsbDriver.write(PrintCmd.PrintFeedline(Integer.valueOf(data)));
+//        } else {
+//          return;
+//        }
+//      }
+//    });
+
+
+    m_sbData = new StringBuilder("店号：8888          机号：100001");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
+    m_sbData = new StringBuilder("电话:0755-12345678");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
+    //PrintFeedDot(20);
+    m_sbData = new StringBuilder("收银：01-店长");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
+    m_sbData = new StringBuilder("时间：" + data());
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
+    m_sbData = new StringBuilder("-------------------------------");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
+    byte[] bByte = new byte[3];
+    bByte[0] = 12;
+    bByte[1] = 18;
+    bByte[2] = 26;
+    mUsbDriver.write(PrintCmd.SetHTseat(bByte, 3));
+
+    m_sbData = new StringBuilder("代码");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
+    mUsbDriver.write(PrintCmd.PrintNextHT());
+    m_sbData = new StringBuilder("单价");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
+    mUsbDriver.write(PrintCmd.PrintNextHT());
+    m_sbData = new StringBuilder("数量");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
+    mUsbDriver.write(PrintCmd.PrintNextHT());
+    m_sbData = new StringBuilder("金额");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
+
+    m_sbData = new StringBuilder("48572819");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
+    mUsbDriver.write(PrintCmd.PrintNextHT());
+    m_sbData = new StringBuilder("2.00");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
+    mUsbDriver.write(PrintCmd.PrintNextHT());
+    m_sbData = new StringBuilder("3.00");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
+    mUsbDriver.write(PrintCmd.PrintNextHT());
+    m_sbData = new StringBuilder("6.00");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
+    m_sbData = new StringBuilder("怡宝矿泉水");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
+    m_sbData = new StringBuilder("48572820");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
+    mUsbDriver.write(PrintCmd.PrintNextHT());
+    m_sbData = new StringBuilder("2.50");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
+    mUsbDriver.write(PrintCmd.PrintNextHT());
+    m_sbData = new StringBuilder("2.00");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
+    mUsbDriver.write(PrintCmd.PrintNextHT());
+    m_sbData = new StringBuilder("5.00");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
+    m_sbData = new StringBuilder("百事可乐(罐装)");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
+    m_sbData = new StringBuilder("-------------------------------");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
+    m_sbData = new StringBuilder("合计：");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
+    mUsbDriver.write(PrintCmd.PrintNextHT());
+    mUsbDriver.write(PrintCmd.PrintNextHT());
+    m_sbData = new StringBuilder("5.00");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
+    mUsbDriver.write(PrintCmd.PrintNextHT());
+    m_sbData = new StringBuilder("11.00");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
+
+    m_sbData = new StringBuilder("优惠：");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
+    mUsbDriver.write(PrintCmd.PrintNextHT());
+    mUsbDriver.write(PrintCmd.PrintNextHT());
+    mUsbDriver.write(PrintCmd.PrintNextHT());
+    m_sbData = new StringBuilder(" 0.00");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
+
+    m_sbData = new StringBuilder("应付：");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
+    mUsbDriver.write(PrintCmd.PrintNextHT());
+    mUsbDriver.write(PrintCmd.PrintNextHT());
+    mUsbDriver.write(PrintCmd.PrintNextHT());
+    m_sbData = new StringBuilder("11.00");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
+
+    m_sbData = new StringBuilder("微信支付：");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
+    mUsbDriver.write(PrintCmd.PrintNextHT());
+    mUsbDriver.write(PrintCmd.PrintNextHT());
+    mUsbDriver.write(PrintCmd.PrintNextHT());
+    m_sbData = new StringBuilder("11.00");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
+
+    m_sbData = new StringBuilder("找零：");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 1));
+    mUsbDriver.write(PrintCmd.PrintNextHT());
+    mUsbDriver.write(PrintCmd.PrintNextHT());
+    mUsbDriver.write(PrintCmd.PrintNextHT());
+    m_sbData = new StringBuilder(" 0.00");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
+
+    m_sbData = new StringBuilder("-------------------------------");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
+    m_sbData = new StringBuilder("会员：");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
+    m_sbData = new StringBuilder("券号：");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
+    m_sbData = new StringBuilder("-------------------------------");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
+    PrintFeedDot(20);
+    m_sbData = new StringBuilder("手机易捷通：ejeton.com.cn ");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
+    m_sbData = new StringBuilder("客户热线：400-6088-160");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
+    m_sbData = new StringBuilder("微信号：ejeton ");
+    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
+    m_sbData = new StringBuilder("http://weixin.qq.com/r/R3VZQQDEi130rUQi9yBV");
+    mUsbDriver.write(PrintCmd.PrintQrcode(unicodeToUtf8(m_sbData.toString()), 10, 5, 0));
+    mUsbDriver.write(PrintCmd.PrintFeedline(5));
     mUsbDriver.write(PrintCmd.PrintCutpaper(1));
   }
 
