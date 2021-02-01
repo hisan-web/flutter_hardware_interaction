@@ -1,0 +1,48 @@
+group 'com.hisanweb.flutter_hardware_interaction'
+version '1.0'
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.5.0'
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 29
+
+    defaultConfig {
+        minSdkVersion 16
+    }
+    lintOptions {
+        disable 'InvalidPackage'
+    }
+
+    sourceSets {
+        main {
+            jni.srcDirs = []    // disable automatic ndk-build call, which ignore our Android.mk
+            jniLibs.srcDir 'src/main/jniLibs'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    //
+    implementation 'org.apache.httpcomponents:httpcore:4.4.4'
+    implementation files('src/main/jniLibs/jna.jar')
+    implementation files('src/main/jniLibs/jna-platform.jar')
+}
