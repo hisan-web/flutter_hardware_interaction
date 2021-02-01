@@ -17,9 +17,9 @@ class FlutterHardwareInteraction {
    */
 
   /// 打印
-  static Future<bool> msPrinterWrite() async {
+  static Future<bool> msPrinterWrite(String data) async {
     try {
-      return await _channel.invokeMethod('msPrinterWrite');
+      return await _channel.invokeMethod('msPrinterWrite',{'data': data});
     } catch(e) {
       return false;
     }
