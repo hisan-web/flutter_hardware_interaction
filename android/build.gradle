@@ -45,4 +45,5 @@ dependencies {
     implementation 'org.apache.httpcomponents:httpcore:4.4.4'
     implementation files('src/main/jniLibs/jna.jar')
     implementation files('src/main/jniLibs/jna-platform.jar')
+    implementation 'com.alibaba:fastjson:1.2.73'
 }

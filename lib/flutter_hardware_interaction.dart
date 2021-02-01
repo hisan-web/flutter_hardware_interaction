@@ -11,6 +11,11 @@ class FlutterHardwareInteraction {
     return "";
   }
 
+
+  /**
+   * [{"type":"String", "data":"店号：8888","lineFeed":0}, {"type":"QrCode","data":""},{"type":"ImageBase64","data":""},"type":"FeedLine","data":5,"type":"FeedDot","data":5]
+   */
+
   /// 打印
   static Future<bool> msPrinterWrite() async {
     try {
