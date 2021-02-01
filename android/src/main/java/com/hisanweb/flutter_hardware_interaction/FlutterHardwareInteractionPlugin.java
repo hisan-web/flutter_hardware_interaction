@@ -105,6 +105,7 @@ public class FlutterHardwareInteractionPlugin implements FlutterPlugin, MethodCa
         break;
       case "msPrinterWrite":
         String data = call.argument("data");
+        Log.d(TAG,"收到Flutter传来数据："+data);
         List<MsPrintDataModel> msPrintDataModels = JSONArray.parseArray(data, MsPrintDataModel.class);
         msPrinterWrite(msPrintDataModels);
         result.success(true);
@@ -138,8 +139,9 @@ public class FlutterHardwareInteractionPlugin implements FlutterPlugin, MethodCa
   /**
    * 美松打印机打印
    */
-  @RequiresApi(api = Build.VERSION_CODES.N)
+  @SuppressLint("NewApi")
   private void msPrinterWrite(List<MsPrintDataModel> dataModelList) {
+    Log.d(TAG,dataModelList.toString());
     int iDriverCheck = usbDriverCheck();
     if (iDriverCheck == -1) {
       return;
