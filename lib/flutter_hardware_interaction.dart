@@ -11,8 +11,8 @@ class FlutterHardwareInteraction {
     return "";
   }
 
-
-  Future<bool> msPrinterWrite() async {
+  /// 打印
+  static Future<bool> msPrinterWrite() async {
     try {
       return await _channel.invokeMethod('msPrinterWrite');
     } catch(e) {
@@ -20,7 +20,8 @@ class FlutterHardwareInteraction {
     }
   }
 
-  Future<bool> msPrinterOpen() async {
+  /// 打开打印机纸仓
+  static Future<bool> msPrinterOpen() async {
     try {
       return await _channel.invokeMethod('msPrinterOpen');
     } catch(e) {
@@ -28,7 +29,8 @@ class FlutterHardwareInteraction {
     }
   }
 
-  Future<bool> msPrinterGetStatus() async {
+  /// 获取打印机状态
+  static Future<bool> msPrinterGetStatus() async {
     try {
       return await _channel.invokeMethod('msPrinterGetStatus');
     } catch(e) {
@@ -36,7 +38,8 @@ class FlutterHardwareInteraction {
     }
   }
 
-  Future<bool> systemShutdown() async {
+  /// 关机
+  static Future<bool> systemShutdown() async {
     try {
       return await _channel.invokeMethod('systemShutdown');
     } catch(e) {
@@ -44,7 +47,8 @@ class FlutterHardwareInteraction {
     }
   }
 
-  Future<bool> systemReboot() async {
+  /// 重启
+  static Future<bool> systemReboot() async {
     try {
       return await _channel.invokeMethod('systemReboot');
     } catch(e) {
@@ -52,7 +56,8 @@ class FlutterHardwareInteraction {
     }
   }
 
-  Future<bool> systemHideUI() async {
+  /// 隐藏导航栏/任务栏
+  static Future<bool> systemHideUI() async {
     try {
       return await _channel.invokeMethod('systemHideUI');
     } catch(e) {
@@ -60,7 +65,8 @@ class FlutterHardwareInteraction {
     }
   }
 
-  Future<bool> systemShowUI() async {
+  /// 显示导航栏/任务栏
+  static Future<bool> systemShowUI() async {
     try {
       return await _channel.invokeMethod('systemShowUI');
     } catch(e) {
@@ -68,7 +74,8 @@ class FlutterHardwareInteraction {
     }
   }
 
-  Future<bool> systemOpenGestureUI() async {
+  /// 开启划出状态栏
+  static Future<bool> systemOpenGestureUI() async {
     try {
       return await _channel.invokeMethod('systemOpenGestureUI');
     } catch(e) {
@@ -76,7 +83,8 @@ class FlutterHardwareInteraction {
     }
   }
 
-  Future<bool> systemCloseGestureUI() async {
+  /// 关闭划出导航栏
+  static Future<bool> systemCloseGestureUI() async {
     try {
       return await _channel.invokeMethod('systemCloseGestureUI');
     } catch(e) {
@@ -84,7 +92,8 @@ class FlutterHardwareInteraction {
     }
   }
 
-  Future<bool> systemReadModel() async {
+  /// 读取主板型号
+  static Future<bool> systemReadModel() async {
     try {
       return await _channel.invokeMethod('systemReadModel');
     } catch(e) {
@@ -92,7 +101,8 @@ class FlutterHardwareInteraction {
     }
   }
 
-  Future<bool> systemReadSerial() async {
+  /// 读取主板序列号
+  static Future<bool> systemReadSerial() async {
     try {
       return await _channel.invokeMethod('systemReadSerial');
     } catch(e) {
