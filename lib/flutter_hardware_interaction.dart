@@ -35,12 +35,9 @@ class FlutterHardwareInteraction {
   }
 
   /// 获取打印机状态
-  static Future<bool> msPrinterGetStatus() async {
-    try {
-      return await _channel.invokeMethod('msPrinterGetStatus');
-    } catch(e) {
-      return false;
-    }
+  static Future<int> msPrinterGetStatus() async {
+    int resultCode =  await _channel.invokeMethod('msPrinterGetStatus');
+    return resultCode;
   }
 
   /// 关机

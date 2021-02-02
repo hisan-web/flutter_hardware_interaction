@@ -200,7 +200,7 @@ public class FlutterHardwareInteractionPlugin implements FlutterPlugin, MethodCa
 //    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
 //    m_sbData = new StringBuilder("电话:0755-12345678");
 //    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
-//    //PrintFeedDot(20);
+//    PrintFeedDot(20);
 //    m_sbData = new StringBuilder("收银：01-店长");
 //    mUsbDriver.write(PrintCmd.PrintString(m_sbData.toString(), 0));
 //    m_sbData = new StringBuilder("时间：" + data());
