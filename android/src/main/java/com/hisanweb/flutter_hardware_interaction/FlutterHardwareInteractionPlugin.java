@@ -186,7 +186,9 @@ public class FlutterHardwareInteractionPlugin implements FlutterPlugin, MethodCa
           int[] data1 = pixels;
           mUsbDriver.write(PrintDiskImagefile(data1, width, heigh));
         } else if (type.equals("QrCode")) {
-          mUsbDriver.write(PrintCmd.PrintQrcode(unicodeToUtf8(data), 0, 8, 0));
+          if (data != null && data != "") {
+            mUsbDriver.write(PrintCmd.PrintQrcode(unicodeToUtf8(data), 0, 8, 0));
+          }
         } else if (type.equals("FeedDot")) {
           mUsbDriver.write(PrintCmd.PrintFeedDot(Integer.valueOf(data)));
         } else if (type.equals("FeedLine")) {
