@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.os.Build;
+import android.os.Message;
 import android.util.Base64;
 
 import androidx.annotation.NonNull;
@@ -31,6 +32,7 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
+import static android.content.ContentValues.TAG;
 import static com.hisanweb.flutter_hardware_interaction.msprintsdk.PrintCmd.PrintDiskImagefile;
 import static com.hisanweb.flutter_hardware_interaction.msprintsdk.PrintCmd.PrintFeedDot;
 import static com.hisanweb.flutter_hardware_interaction.msprintsdk.UtilsTools.convertToBlackWhite;
@@ -358,10 +360,35 @@ public class FlutterHardwareInteractionPlugin implements FlutterPlugin, MethodCa
     return iResult;
   }
 
+
   private int msPrinterGetStatus() {
-    byte[] bytes = PrintCmd.GetStatus();
-    int status = PrintCmd.CheckStatus(bytes);
-    return status;
+    int iValue = 0;
+    byte[] bRead1 = new byte[1];
+    if (mUsbDriver.read(bRead1, PrintCmd.GetStatus1()) > 0) {
+      iValue = PrintCmd.CheckStatus1(bRead1[0]);
+      return iValue;
+    }
+
+    if (iValue == 0) {
+      if (mUsbDriver.read(bRead1, PrintCmd.GetStatus2()) > 0) {
+        iValue = PrintCmd.CheckStatus2(bRead1[0]);
+        return iValue;
+      }
+    }
+
+    if (iValue == 0) {
+      if (mUsbDriver.read(bRead1, PrintCmd.GetStatus3()) > 0) {
+        iValue = PrintCmd.CheckStatus3(bRead1[0]);
+        return iValue;
+      }
+    }
+    if (iValue == 0) {
+      if (mUsbDriver.read(bRead1, PrintCmd.GetStatus4()) > 0) {
+        iValue = PrintCmd.CheckStatus4(bRead1[0]);
+        return iValue;
+      }
+    }
+    return iValue;
   }
 
   private void msPrinterOpen() {
